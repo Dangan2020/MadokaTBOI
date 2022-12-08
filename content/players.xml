@@ -1,0 +1,10 @@
+<players nameimageroot="gfx/ui/boss/" portraitroot="gfx/ui/stage/" root="gfx/characters/costumes/">
+	<player hp="4" armor="4" name="Madoka"
+	nameimage="playername_madoka.png" portrait="playerportrait_madoka.png" skin="character_madoka.png" skinColor="-1"
+	birthright="No more despair" costumeSuffix="_madoka"
+	/>
+	
+	<player hp="8" bombs="1" name="Madoka"
+	nameimage="playername_madoka_b.png" portrait="playerportrait_madoka_b.png" skin="character_madoka_b.png" skinColor="-1"
+	birthright="Selfless desires" costumeSuffix="_madoka_b" bSkinParent="Madoka"/>
+</players>

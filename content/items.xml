@@ -1,0 +1,3 @@
+<items gfxroot="gfx/items/" version="1">
+	<active name="Madoka's Soul Gem" description="Merciful Misfortune" gfx="madokasoulgem.png" chargetype="normal" maxcharges="6" initcharges="0" quality="0" hidden="true" tags="quest nodaily nochallenge noeden" />
+</items>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <name>Madoka (Character)</name>
+    <directory>madoka</directory>
+    <id>2802793236</id>
+    <description>Never seen anyone else doing a Madoka Magica mod (aside from the soundtrack mod by PixelDemise, only has up to AB+, no repentance music) so I thought I'd try to make one.
+
+This is my first time ever making mods for TBOI, any feedback is welcome. (I might make this open source for everyone's contribution)
+
+Madoka's stats:
+2 Red + 2 Soul Hearts
+0.80 Speed
+3.00 Tears
+2.00 Damage
+6.60 Range
+1.00 Shot Speed
+1 Luck
+Starts with Cupid's Arrow &amp; Epiphora (temporary starting items, might change them in a future update).
+
+Tainted Madoka's stats (might revamp the look to have a more edgier/darker look in a future update):
+4 Hearts
+1.00 Speed
+2.31 Tears
+4.50 Damage
+6.60 Range
+0.6 Shot Speed
+-3 Luck
+Exclusive item: Soul Gem.
+
+Special Thanks:
+manaphoenix - Character Template
+Sanio - Character Costume Protector (yeah I didn't want to draw new costumes lol)
+...and the modding community for coding support.</description>
+    <version>1.23</version>
+    <visibility>Public</visibility>
+    <tag id="Lua"/>
+    <tag id="Player Characters"/>
+</metadata>
