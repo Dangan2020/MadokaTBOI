@@ -111,15 +111,20 @@ local data = player:GetData()
 
 	if player:IsDead() and Madoka_Character.HasMadokaSoulGem and corruption == 0 and player:GetExtraLives() == 0 then
 	--If the player took a fatal damage, has the Soul gem, corruption trigger is off and no extra lives...
+			player:ResetDamageCooldown()
+			playingAnimation = true
+			immuneToDamage = true
 			SFXManager():Play(SoundEffect.SOUND_ISAACDIES)
 			player.Friction = 0
 			player.ControlsEnabled = false
 			player:GetSprite():Play("Death", 1)
-			player:Revive()
+			player:Revive()     
+			player:ResetDamageCooldown()
+			player:SetMinDamageCooldown(120)
 			
 		revive_hearts = player:GetMaxHearts() --get current red heart containers
-		if revive_hearts == 0 then  --if none, spend by default 1500
-			cost = 1500
+		if revive_hearts == 0 then  --if none, spend by default 2000
+			cost = 2000
 			playingAnimation = true
 			immuneToDamage = true
 		else
@@ -136,6 +141,8 @@ local data = player:GetData()
 		if data.SoulPoints > cost then
 			data.SoulPoints = data.SoulPoints - cost
 			SFXManager():Play(SoundEffect.SOUND_SUPERHOLY)
+			
+			Game():GetHUD():ShowFortuneText(cost .. " Soul Points", "Spent")
 				if player:GetMaxHearts() == 0 then  --no red heart containers, revive with 2 soul
 					player:AddSoulHearts(3)
 				else        --otherwise full red health
@@ -169,7 +176,8 @@ local data = player:GetData()
 	
 end
 --Revive part end
-Madoka_Character:AddCallback(ModCallbacks.MC_POST_UPDATE, Madoka_Character.Soul_Revive, EntityType.ENTITYPLAYER)
+Madoka_Character:AddCallback(ModCallbacks.MC_POST_UPDATE, Madoka_Character.Soul_Revive, EntityType.ENTITY_PLAYER)
+
 
 function Madoka_Character:immune() -- Immune to damage (during revival)
 	if immuneToDamage then
@@ -184,6 +192,7 @@ for i = 0, game:GetNumPlayers() - 1, 1 do
 		if Madoka_Character.HasMadokaSoulGem then --does the player have the collectible?
 			local data = player:GetData()
 			Isaac.RenderText("Soul Points: " .. data.SoulPoints, 60, 40, 1, 1, 1, 255)
+			--Isaac.RenderText("Next revival cost: " .. cost, 60, 50, 1, 1, 1, 255)
 		end
 	end
 end
@@ -198,7 +207,8 @@ for i = 0, game:GetNumPlayers() - 1, 1 do
 		
 		if player:GetPlayerType() == Isaac.GetPlayerTypeByName("Madoka", true) then
 			if room:GetType() == RoomType.ROOM_BOSS and player:GetPlayerType() == Isaac.GetPlayerTypeByName("Madoka", true) then  --Is the room a boss room? Is the player playing as Tainted Madoka?
-				data.SoulPoints = data.SoulPoints + 1750  --Add Soul Points
+				data.SoulPoints = data.SoulPoints + 1000  --Add Soul Points
+				SFXManager():Play(SoundEffect.SOUND_SOUL_PICKUP)
 			end
 			if data.SoulPoints > data.MAXSoulPoints and player:GetPlayerType() == Isaac.GetPlayerTypeByName("Madoka", true) then  --Reduce overloaded points if went higher
 				data.SoulPoints = data.MAXSoulPoints
@@ -214,7 +224,7 @@ function Madoka_Character:updateCache(player, cacheFlag)
 	local data = player:GetData()
 		if data.SoulGemTimer and data.SoulGemTimer > 0 then --modify the stats to gain here
 			if cacheFlag == CacheFlag.CACHE_FIREDELAY then
-				player.MaxFireDelay = player.MaxFireDelay * 0.05 -- or something, I forget the correct variable to change since repentance updated the formulas
+				player.MaxFireDelay = player.MaxFireDelay - 12 -- or something, I forget the correct variable to change since repentance updated the formulas
 			elseif cacheFlag == CacheFlag.CACHE_SHOTSPEED then
 				player.ShotSpeed = player.ShotSpeed + 2
 			end

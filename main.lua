@@ -1,86 +1,110 @@
--- vars
-local useCustomErrorChecker = true -- should the custom error checker be used?
-
--- file loc
-local _, err = pcall(require, "")
-local modName = err:match("/mods/(.*)/%.lua")
-local path = "mods/" .. modName .. "/"
-
-local function require(loc, ...)
-    return assert(require(path .. loc .. ".lua"))(...)
-end
-
-local _, ogerr = pcall(function()
-    local stats = require("mod/stats")
-    local stats = require("mod/stats")
-    local imports = require("mod/imports")
-    require("mod/MainMod",
-             {modName, path, require, stats, imports, useCustomErrorChecker})
-end)
-
---Costume Protector
+local Mod = RegisterMod("Madoka_Character", 1) -- Change the part in quotes to match your mod name
 Madoka_Character = RegisterMod("Madoka_Character", 1)
-local costumeProtector = include("lib/characterCostumeProtector.lua")
-costumeProtector:Init(Madoka_Character)
 
-local PLAYER_MADOKA = Isaac.GetPlayerTypeByName("Madoka", false)
-local PLAYER_MADOKA_B = Isaac.GetPlayerTypeByName("Madoka", true)
+local Madoka = { --Normal Madoka stat editing
+    DAMAGE = -1.5, -- These are all relative to Isaac's base stats.
+	MAXFIREDELAY = -1, 
+	SHOTSPEED = 0,
+    SPEED = -0.2,
+    TEARHEIGHT = 3.81,
+    TEARFALLINGSPEED = -1,
+    LUCK = 1,
+    FLYING = false,                                  
+    TEARFLAG = 0, -- 0 is default
+    TEARCOLOR = Color(1.0, 1.0, 1.0, 1.0, 0, 0, 0)  -- Color(1.0, 1.0, 1.0, 1.0, 0, 0, 0) is default
+}
 
-function Madoka_Character:PlayerInit(player)
-	local playerType = player:GetPlayerType()
+local TMadoka = { --Tainted Madoka stat editing
+	DAMAGE = 1, -- These are all relative to Isaac's base stats.
+	MAXFIREDELAY = 2, 
+	SHOTSPEED = -0.5,
+    SPEED = 0,
+    TEARHEIGHT = 3.81,
+    TEARFALLINGSPEED = -1,
+    LUCK = -3,
+    FLYING = false,                                  
+    TEARFLAG = 0, -- 0 is default
+    TEARCOLOR = Color(1.0, 1.0, 1.0, 1.0, 0, 0, 0)  -- Color(1.0, 1.0, 1.0, 1.0, 0, 0, 0) is default
+}
+ 
+function Madoka:onCache(player, cacheFlag)
+    if player:GetPlayerType() == Isaac.GetPlayerTypeByName("Madoka", false) then
+        if cacheFlag == CacheFlag.CACHE_DAMAGE then
+            player.Damage = player.Damage + Madoka.DAMAGE
+        end
+		if cacheFlag == CacheFlag.CACHE_FIREDELAY then
+			player.MaxFireDelay = player.MaxFireDelay + Madoka.MAXFIREDELAY
+		end
+        if cacheFlag == CacheFlag.CACHE_SHOTSPEED then
+            player.ShotSpeed = player.ShotSpeed + Madoka.SHOTSPEED
+        end
+        if cacheFlag == CacheFlag.CACHE_RANGE then
+            player.TearHeight = player.TearHeight - Madoka.TEARHEIGHT
+            player.TearFallingSpeed = player.TearFallingSpeed + Madoka.TEARFALLINGSPEED
+        end
+        if cacheFlag == CacheFlag.CACHE_SPEED then
+            player.MoveSpeed = player.MoveSpeed + Madoka.SPEED
+        end
+        if cacheFlag == CacheFlag.CACHE_LUCK then
+            player.Luck = player.Luck + Madoka.LUCK
+        end
+        if cacheFlag == CacheFlag.CACHE_FLYING and Madoka.FLYING then
+            player.CanFly = true
+        end
+        if cacheFlag == CacheFlag.CACHE_TEARFLAG then
+            player.TearFlags = player.TearFlags | Madoka.TEARFLAG
+        end
+        if cacheFlag == CacheFlag.CACHE_TEARCOLOR then
+            player.TearColor = Madoka.TEARCOLOR
+        end
+    end
 	
-	costumeProtector:AddPlayer(
-    player,
-    PLAYER_MADOKA,
-    "gfx/characters/costumes/character_madoka.png",
-    67, --A separate costume that is added for all cases that you ever gain flight.
-    "gfx/characters/costumes/character_madoka.png", --Your character's spritesheet, but customized to have your flight costume.
-    Isaac.GetCostumeIdByPath("gfx/characters/character_madoka_hair.anm2") --Your character's additional costume. Hair, ears, whatever.
-  )
-	costumeProtector:ItemCostumeWhitelist(
-    PLAYER_MADOKA,
-    {
-    [CollectibleType.COLLECTIBLE_TRANSCENDENCE] = true,
-	[CollectibleType.COLLECTIBLE_PONY] = true,
-	[CollectibleType.COLLECTIBLE_ASTRAL_PROJECTION] = true
-    }
-	)
+	if player:GetPlayerType() == Isaac.GetPlayerTypeByName("Madoka", true) then
+        if cacheFlag == CacheFlag.CACHE_DAMAGE then
+            player.Damage = player.Damage + TMadoka.DAMAGE
+        end
+		if cacheFlag == CacheFlag.CACHE_FIREDELAY then
+			player.MaxFireDelay = player.MaxFireDelay + TMadoka.MAXFIREDELAY
+		end
+        if cacheFlag == CacheFlag.CACHE_SHOTSPEED then
+            player.ShotSpeed = player.ShotSpeed + TMadoka.SHOTSPEED
+        end
+        if cacheFlag == CacheFlag.CACHE_RANGE then
+            player.TearHeight = player.TearHeight - TMadoka.TEARHEIGHT
+            player.TearFallingSpeed = player.TearFallingSpeed + TMadoka.TEARFALLINGSPEED
+        end
+        if cacheFlag == CacheFlag.CACHE_SPEED then
+            player.MoveSpeed = player.MoveSpeed + TMadoka.SPEED
+        end
+        if cacheFlag == CacheFlag.CACHE_LUCK then
+            player.Luck = player.Luck + TMadoka.LUCK
+        end
+        if cacheFlag == CacheFlag.CACHE_FLYING and TMadoka.FLYING then
+            player.CanFly = true
+        end
+        if cacheFlag == CacheFlag.CACHE_TEARFLAG then
+            player.TearFlags = player.TearFlags | TMadoka.TEARFLAG
+        end
+        if cacheFlag == CacheFlag.CACHE_TEARCOLOR then
+            player.TearColor = TMadoka.TEARCOLOR
+        end
+    end
 	
-	costumeProtector:NullItemIDWhitelist(
-    PLAYER_MADOKA,
-    {
-    [NullItemID.ID_LOST_CURSE] = true,
-    [NullItemID.ID_SPIRIT_SHACKLES_SOUL] = true
-    }
-	)
-	
-	costumeProtector:AddPlayer(
-    player,
-    PLAYER_MADOKA_B,
-    "gfx/characters/costumes/character_madoka_b.png",
-    67, --A separate costume that is added for all cases that you ever gain flight.
-    "gfx/characters/costumes/character_madoka_b.png", --Your character's spritesheet, but customized to have your flight costume.
-    Isaac.GetCostumeIdByPath("gfx/characters/character_madoka_hair_b.anm2") --Your character's additional costume. Hair, ears, whatever.
-  )
-	costumeProtector:ItemCostumeWhitelist(
-    PLAYER_MADOKA_B,
-    {
-    [CollectibleType.COLLECTIBLE_TRANSCENDENCE] = true,
-	[CollectibleType.COLLECTIBLE_PONY] = true,
-	[CollectibleType.COLLECTIBLE_ASTRAL_PROJECTION] = true
-    }
-	)
-	
-	costumeProtector:NullItemIDWhitelist(
-    PLAYER_MADOKA_B,
-    {
-    [NullItemID.ID_LOST_CURSE] = true,
-    [NullItemID.ID_SPIRIT_SHACKLES_SOUL] = true
-    }
-	)
 end
-Madoka_Character:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, Madoka_Character.PlayerInit)
---Costume Protector End
+
+Madoka.HAIR_ID_A = Isaac.GetCostumeIdByPath("gfx/characters/character_madoka_hair.anm2")
+Madoka.HAIR_ID_B = Isaac.GetCostumeIdByPath("gfx/characters/character_madoka_hair_b.anm2")
+
+function Madoka:onUpdate(player)
+	if player:GetPlayerType() == Isaac.GetPlayerTypeByName("Madoka", false) then
+	player:AddNullCostume(Madoka.HAIR_ID_A);
+	end
+	if player:GetPlayerType() == Isaac.GetPlayerTypeByName("Madoka", true) then
+	player:AddNullCostume(Madoka.HAIR_ID_B);
+	end
+end
+
+Mod:AddCallback(ModCallbacks.MC_POST_PLAYER_INIT, Madoka.onUpdate)
 
 --Active Item Start
 include('scripts.items.madokasoulgem')
@@ -90,59 +114,5 @@ if EID then
 EID:setModIndicatorName("Madoka")
 include('scripts.EID.descriptions')
 end
-
-
-if (ogerr) then
-    if (useCustomErrorChecker) then
-        local errorChecker = require("lib/cerror")
-        errorChecker.registerError()
-
-        errorChecker.mod:AddCallback(ModCallbacks.MC_POST_GAME_STARTED,
-                                     function(_, IsContin)
-            local room = Game():GetRoom()
-
-            for i = 0, 8 do room:RemoveDoor(i) end
-        end)
-
-        local str = errorChecker.formatError(ogerr)
-
-        if (str) then
-            local file = str:match("%w+%.lua")
-            local line = str:match(":(%d+):")
-            local err = str:match(":%d+: (.*)")
-            errorChecker.setMod(modName)
-            errorChecker.setFile(file)
-            errorChecker.setLine(line)
-            errorChecker.printError("Error:", err)
-            errorChecker.printError("")
-            errorChecker.printError("For full error report, open log.txt")
-            errorChecker.printError("")
-            errorChecker.printError("Log Root: C:\\Users\\<YOUR USER>\\Documents\\My Games\\Binding of Isaac Repentance\\log.txt")
-            errorChecker.printError("")
-            errorChecker.printError("Reload the mod, then start a new run, Holding R works")
-        else
-            errorChecker.printError("Unexpected error occured, please open log.txt!")
-            errorChecker.printError("Log Root: C:\\Users\\<YOUR USER>\\Documents\\My Games\\Binding of Isaac Repentance\\log.txt")
-            errorChecker.printError("")
-            errorChecker.printError(ogerr)
-        end
-        Isaac.DebugString("-- START OF " .. modName:upper() .. " ERROR --")
-        Isaac.DebugString(ogerr)
-        Isaac.DebugString("-- END OF " .. modName:upper() .. " ERROR --")
-
-        local room = Game():GetRoom()
-
-        for i = 0, 8 do room:RemoveDoor(i) end
-
-        error()
-    else
-        Isaac.ConsoleOutput(modName ..
-                                " has hit an error, see Log.txt for more info\n")
-        Isaac.ConsoleOutput(
-            "Log Root: C:\\Users\\<YOUR USER>\\Documents\\My Games\\Binding of Isaac Repentance\\log.txt")
-        Isaac.DebugString("-- START OF " .. modName:upper() .. " ERROR --")
-        Isaac.DebugString(ogerr)
-        Isaac.DebugString("-- END OF " .. modName:upper() .. " ERROR --")
-        error()
-    end
-end
+ 
+Mod:AddCallback(ModCallbacks.MC_EVALUATE_CACHE, Madoka.onCache)
